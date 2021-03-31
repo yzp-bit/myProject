@@ -12,14 +12,15 @@
 </template>
 
 <script>
-import HelloWorld from './components'
+import HelloWorld from "./components";
 export default {
   name: "App",
-  components:{
-    [HelloWorld.name]:HelloWorld
+  components: {
+    [HelloWorld.name]: HelloWorld
   },
   data() {
     return {
+      data:[],
       option: {
         title: { text: "在Vue中使用echarts" },
         tooltip: {},
@@ -38,31 +39,49 @@ export default {
     };
   },
   created() {
-    this.$nextTick(()=>{
-      this.drawLine()
-    })
+    this.$nextTick(() => {
+      this.drawLine();
+      this.$api.control().then((response) =>{
+        this.data = response.data.data
+        console.log(this.data)
+      });
+      this.$api.echartdata().then((res)=>{
+        console.log(res.data);
+ this.option.series[0].data=res.data.data;
+ this.myChart.setOption(this.option);
+      })
+    });
   },
   methods: {
+    bbb(callback) {
+      setTimeout(() => {
+        console.log("b");
+        callback();
+      }, 500);
+    },
+    aaa() {
+      console.log("a");
+    },
     drawLine() {
-       this.myChart = this.$echarts.init(document.getElementById("myChart"));
+      this.myChart = this.$echarts.init(document.getElementById("myChart"));
       this.myChart.setOption(this.option);
     },
-    randomData(){
-      let a=[];
-      for ( let i=0;i<6;i++){
-        console.log(i)
-        a.push(Math.floor(Math.random()*(10-0+1)))
+    randomData() {
+      let a = [];
+      for (let i = 0; i < 6; i++) {
+        console.log(i);
+        a.push(Math.floor(Math.random() * (10 - 0 + 1)));
       }
-      console.log(a)
-      let b= this.myChart.getOption();
+      console.log(a);
+      let b = this.myChart.getOption();
       console.log(b.series[0].data);
-      b.series[0].data=a;
+      b.series[0].data = a;
       this.myChart.setOption(b);
     },
-    changeData(){
-      console.log(this.$refs.children)
-      this.$refs.children.alerts('我改了')
-      this.$refs.children.$el.style.color = 'red'
+    changeData() {
+      console.log(this.$refs.children);
+      this.$refs.children.alerts("我改了");
+      this.$refs.children.$el.style.color = "red";
     }
   }
 };
